@@ -218,7 +218,7 @@ function App() {
 
               {/* Tombol Buka PDF */}
               <a
-                href="${API_URL}/uploads/pdf/modul-guling-belakang.pdf"
+                href={`${API_URL}/uploads/pdf/modul-guling-belakang.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-pdf"
