@@ -20,7 +20,7 @@
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Mencegah scroll ganda sesuai kodemu sebelumnya */
+  overflow: hidden; 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--text-main);
   background-color: var(--bg-app);
@@ -29,17 +29,19 @@ body, html {
 .container {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%; 
+  max-width: 100%;
   background-color: var(--bg-app);
+  overflow-x: hidden; 
 }
 
 /* =========================================
    2. AUTHENTICATION (LOGIN)
 ========================================= */
 .login-container {
-  background: var(--bg-app);
+  background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%); /* Latar belakang lebih premium */
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,27 +52,28 @@ body, html {
 }
 
 .login-card {
-  padding: 40px;
+  padding: 48px 40px;
   background: var(--card-bg);
   border-radius: 24px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Shadow lebih dalam dan elegan */
   border: 1px solid var(--border-color);
+  border-top: 6px solid var(--primary-blue); /* Aksen garis di atas */
   width: 90%;
-  max-width: 420px;
+  max-width: 440px;
   text-align: center;
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px; /* Jarak antar input diperlebar agar tidak sesak */
   margin-top: 24px;
 }
 
 .login-form input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 16px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   font-size: 15px;
@@ -83,7 +86,7 @@ body, html {
   outline: none;
   border-color: var(--primary-blue);
   background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
 .toggle-auth {
@@ -210,24 +213,28 @@ body, html {
 .welcome-section {
   background: var(--card-bg);
   color: var(--text-main);
-  padding: 32px;
+  padding: 40px;
   border-radius: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border-color);
-  border-left: 6px solid var(--primary-blue);
+  border-left: 8px solid var(--primary-blue);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Rata kiri agar terlihat rapi */
 }
 
 .welcome-section h2 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 2rem; /* Ukuran teks diperbesar */
   font-weight: 700;
 }
 
 .welcome-section p {
   color: var(--text-muted);
-  margin-top: 8px;
-  font-size: 1rem;
+  margin-top: 12px;
+  font-size: 1.05rem;
 }
 
 .stats-grid {
