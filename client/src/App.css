@@ -38,30 +38,90 @@ body, html {
 /* =========================================
    2. AUTHENTICATION (LOGIN)
 ========================================= */
-.login-container {
-  background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%); /* Latar belakang lebih premium */
+.login-wrapper {
+  display: flex;
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
+  background-color: #ffffff;
+}
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ilustrasi lengkungan opsional agar mirip referensi */
+.login-left::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.login-left-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.login-left-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 80%;
+}
+
+.login-right {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
+  padding: 40px;
 }
 
-.login-card {
-  padding: 48px 40px;
-  background: var(--card-bg);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Shadow lebih dalam dan elegan */
-  border: 1px solid var(--border-color);
-  border-top: 6px solid var(--primary-blue); /* Aksen garis di atas */
-  width: 90%;
-  max-width: 440px;
-  text-align: center;
+.login-card-modern {
+  width: 100%;
+  max-width: 400px;
   animation: fadeIn 0.5s ease-out;
+}
+
+.login-header {
+  margin-bottom: 30px;
+}
+
+.login-header h2 {
+  font-size: 1.8rem;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.login-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.login-form input {
+  margin-bottom: 20px;
 }
 
 .login-form {

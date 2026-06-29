@@ -177,42 +177,54 @@ function App() {
   };
 
   // --- RENDER LOGIC ---
-
   const renderContent = () => {
     if (!user) {
       return (
-        <div className="login-container">
-          <div className="login-card">
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <img src="/Icon home.png" alt="Logo" style={{ width: '60px' }} />
-              <h2>{isRegister ? 'Daftar Akun Baru' : 'Login GymnasticApp'}</h2>
+        <div className="login-wrapper">
+          <div className="login-left">
+            <div className="login-left-content">
+              <h1>Belajar Senam<br />Lebih Mudah &<br />Interaktif</h1>
+              <p>Platform pembelajaran online untuk membantu mahasiswa memahami teknik dasar senam lantai secara efektif melalui materi, video, dan evaluasi.</p>
             </div>
-            {isRegister ? (
-              <form onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  await axios.post(`${API_URL}/api/register`, regData);
-                  alert("Berhasil! Silakan login.");
-                  setIsRegister(false);
-                } catch (error) {
-                  console.error("Gagal daftar:", error);
-                  alert("Gagal daftar");
-                }
-              }} className="login-form">
-                <input type="text" placeholder="Nama" onChange={(e) => setRegData({ ...regData, nama: e.target.value })} required />
-                <input type="email" placeholder="Email" onChange={(e) => setRegData({ ...regData, email: e.target.value })} required />
-                <input type="password" placeholder="Password" onChange={(e) => setRegData({ ...regData, password: e.target.value })} required />
-                <button type="submit" className="btn-primary">Daftar</button>
-                <p onClick={() => setIsRegister(false)} className="toggle-auth">Sudah punya akun? <span onClick={() => setIsRegister(false)}>Login</span></p>
-              </form>
-            ) : (
-              <form onSubmit={handleLogin} className="login-form">
-                <input type="email" placeholder="Email" onChange={(e) => setAuthData({ ...authData, email: e.target.value })} required />
-                <input type="password" placeholder="Password" onChange={(e) => setAuthData({ ...authData, password: e.target.value })} required />
-                <button type="submit" className="btn-primary">Masuk</button>
-                <p onClick={() => setIsRegister(true)} className="toggle-auth">Belum punya akun? <span onClick={() => setIsRegister(true)}>Daftar</span></p>
-              </form>
-            )}
+          </div>
+          <div className="login-right">
+            <div className="login-card-modern">
+              <div className="login-header">
+                <h2>{isRegister ? 'Daftar Akun Baru' : 'Selamat Datang Kembali 👋'}</h2>
+                <p>{isRegister ? 'Lengkapi data di bawah ini' : 'Silakan login untuk melanjutkan'}</p>
+              </div>
+              {isRegister ? (
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    await axios.post(`${API_URL}/api/register`, regData);
+                    alert("Berhasil! Silakan login.");
+                    setIsRegister(false);
+                  } catch (error) {
+                    console.error("Gagal daftar:", error);
+                    alert("Gagal daftar");
+                  }
+                }} className="login-form">
+                  <label>Nama Lengkap</label>
+                  <input type="text" placeholder="Masukkan nama Anda" onChange={(e) => setRegData({ ...regData, nama: e.target.value })} required />
+                  <label>Email</label>
+                  <input type="email" placeholder="Masukkan email Anda" onChange={(e) => setRegData({ ...regData, email: e.target.value })} required />
+                  <label>Password</label>
+                  <input type="password" placeholder="Masukkan password Anda" onChange={(e) => setRegData({ ...regData, password: e.target.value })} required />
+                  <button type="submit" className="btn-primary">Daftar</button>
+                  <p className="toggle-auth">Sudah punya akun? <span onClick={() => setIsRegister(false)}>Login di sini</span></p>
+                </form>
+              ) : (
+                <form onSubmit={handleLogin} className="login-form">
+                  <label>Email</label>
+                  <input type="email" placeholder="Masukkan email Anda" onChange={(e) => setAuthData({ ...authData, email: e.target.value })} required />
+                  <label>Password</label>
+                  <input type="password" placeholder="Masukkan password Anda" onChange={(e) => setAuthData({ ...authData, password: e.target.value })} required />
+                  <button type="submit" className="btn-primary">Login</button>
+                  <p className="toggle-auth">Belum punya akun? <span onClick={() => setIsRegister(true)}>Daftar di sini</span></p>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       );
@@ -223,7 +235,7 @@ function App() {
         return (
           <div className="content-fade">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 className="content-title" style={{ margin: 0 }}>Modul: Guling Belakang</h2>
+              <h2 className="content-title" style={{ margin: 0 }}>Materi Senam Lantai</h2>
 
               {/* Tombol Buka PDF */}
               <a
@@ -491,7 +503,7 @@ function App() {
               {user.role === 'mahasiswa' && (
                 <>
                   <div className={`menu-item ${activeTab === 'materi' ? 'active' : ''}`} onClick={() => handleTabChange('materi')}>
-                    <BookOpen size={20} /><span>Modul Materi</span>
+                    <BookOpen size={20} /><span>Materi Senam</span>
                   </div>
                   <div className={`menu-item ${activeTab === 'video' ? 'active' : ''}`} onClick={() => handleTabChange('video')}>
                     <PlayCircle size={20} /><span>Video Tutorial</span>
