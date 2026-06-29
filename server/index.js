@@ -24,7 +24,7 @@ if (!fs.existsSync(uploadPath)) {
 
 // Konfigurasi CORS: Izinkan akses dari Frontend (Local & Produksi nanti)
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", 
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 }));
@@ -47,25 +47,25 @@ const pool = new Pool({
 console.log("Menghubungkan ke Host:", new URL(process.env.DATABASE_URL).hostname);
 
 pool.connect((err, client, release) => {
-  if (err) {
-    return console.error('❌ Gagal terhubung ke database:', err.stack);
-  }
-  console.log('✅ Berhasil terhubung ke database Supabase');
-  release(); 
+    if (err) {
+        return console.error('❌ Gagal terhubung ke database:', err.stack);
+    }
+    console.log('✅ Berhasil terhubung ke database Supabase');
+    release();
 })
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => { cb(null, 'uploads/'); },
-    filename: (req, file, cb) => { 
+    filename: (req, file, cb) => {
         // Menggunakan slugify sederhana untuk nama file asli agar tidak ada spasi aneh
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname)); 
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, 
+    limits: { fileSize: 2 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const filetypes = /mp4|mov|webm|quicktime/;
         const mimetype = filetypes.test(file.mimetype);
@@ -130,24 +130,31 @@ app.get('/api/materi', async (req, res) => {
 });
 
 app.post('/api/evaluasi', async (req, res) => {
-  const { mahasiswa_id, materi_id, video_url } = req.body;
-  if (!video_url) {
-    return res.status(400).json({ error: "Link video tidak ditemukan" });
-  }
+    const { mahasiswa_id, materi_id, video_url } = req.body;
 
-  try {
-    const { data, error } = await supabase
-      .from('evaluasi')
-      .insert([
-        { mahasiswa_id, materi_id, video_url }
-      ]);
+    if (!video_url) {
+        return res.status(400).json({ error: "Link video tidak ditemukan" });
+    }
 
-    if (error) throw error;
-    
-    res.status(200).json({ message: "Tugas berhasil dikirim!" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    try {
+        const { data, error } = await supabase
+            .from('evaluasi')
+            .insert([
+                {
+                    mahasiswa_id: mahasiswa_id,
+                    materi_id: materi_id,
+                    video_url: video_url,
+                    status: 'pending' // Tambahkan ini agar sesuai skema lama
+                }
+            ]);
+
+        if (error) throw error;
+
+        res.status(200).json({ message: "Tugas berhasil dikirim!" });
+    } catch (err) {
+        console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.get('/api/dosen/evaluasi', async (req, res) => {
@@ -219,21 +226,21 @@ app.get('/api/mahasiswa/hasil/:id', async (req, res) => {
 });
 
 app.get('/api/health', async (req, res) => {
-  try {
-    // Menjalankan query sederhana untuk mengetes respon DB
-    const result = await pool.query('SELECT NOW()');
-    res.json({
-      status: 'online',
-      database: 'connected',
-      time: result.rows[0].now
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      database: 'disconnected',
-      message: err.message
-    });
-  }
+    try {
+        // Menjalankan query sederhana untuk mengetes respon DB
+        const result = await pool.query('SELECT NOW()');
+        res.json({
+            status: 'online',
+            database: 'connected',
+            time: result.rows[0].now
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            database: 'disconnected',
+            message: err.message
+        });
+    }
 });
 
 // ==========================================
