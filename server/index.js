@@ -7,8 +7,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,8 +24,13 @@ if (!fs.existsSync(uploadPath)) {
 
 // Konfigurasi CORS: Izinkan akses dari Frontend (Local & Produksi nanti)
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: "GET,POST,PUT,DELETE",
+    origin: [
+        "https://web-pembelajaran-sandy.vercel.app",
+        "http://localhost:5173",
+        process.env.FRONTEND_URL
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
 
@@ -132,46 +135,54 @@ app.get('/api/materi', async (req, res) => {
 });
 
 app.post('/api/evaluasi', async (req, res) => {
-  const { mahasiswa_id, materi_id, video_url } = req.body;
+    const { mahasiswa_id, materi_id, video_url } = req.body;
 
-  if (!video_url) {
-    return res.status(400).json({ error: "Link video tidak ditemukan" });
-  }
+    if (!video_url) {
+        return res.status(400).json({ error: "Link video tidak ditemukan" });
+    }
 
-  try {
-    const { data, error } = await supabase
-      .from('evaluasi')
-      .insert([
-        { 
-          mahasiswa_id: mahasiswa_id, 
-          materi_id: materi_id, 
-          video_url: video_url,
-          status: 'pending' // Tambahkan ini agar sesuai skema lama
-        }
-      ]);
+    try {
+        const { data, error } = await pool
+            .from('evaluasi')
+            .insert([
+                {
+                    mahasiswa_id: mahasiswa_id,
+                    materi_id: materi_id,
+                    video_url: video_url,
+                    status: 'pending' // Tambahkan ini agar sesuai skema lama
+                }
+            ]);
 
-    if (error) throw error;
-    
-    res.status(200).json({ message: "Tugas berhasil dikirim!" });
-  } catch (err) {
-    console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
-    res.status(500).json({ error: err.message });
-  }
+        if (error) throw error;
+
+        res.status(200).json({ message: "Tugas berhasil dikirim!" });
+    } catch (err) {
+        console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
+        res.status(500).json({ error: err.message });
+    }
 });
 
-app.get('/api/dosen/evaluasi', async (req, res) => {
+app.post('/api/evaluasi', async (req, res) => {
+    const { mahasiswa_id, materi_id, video_url } = req.body;
+
+    if (!video_url) {
+        return res.status(400).json({ error: "Link video tidak ditemukan" });
+    }
+
     try {
-        const result = await pool.query(`
-            SELECT e.*, u.nama as nama_mahasiswa, m.tahap as nama_materi 
-            FROM evaluasi e
-            JOIN users u ON e.mahasiswa_id = u.id
-            JOIN materi m ON e.materi_id = m.id
-            WHERE e.status = 'pending' 
-            ORDER BY e.created_at ASC
-        `);
-        res.json(result.rows);
+        const newEvaluasi = await pool.query(
+            `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
+         VALUES ($1, $2, $3, 'pending') RETURNING *`,
+            [mahasiswa_id, materi_id, video_url]
+        );
+
+        res.status(200).json({
+            message: "Tugas berhasil dikirim!",
+            data: newEvaluasi.rows[0]
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Gagal memuat antrean' });
+        console.error("Database Error:", err.message);
+        res.status(500).json({ error: "Gagal menyimpan tugas ke database" });
     }
 });
 
