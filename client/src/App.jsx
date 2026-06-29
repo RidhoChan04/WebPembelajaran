@@ -2,6 +2,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
+import {
+  Home,
+  BookOpen,
+  PlayCircle,
+  ClipboardCheck,
+  Users,
+  LogOut
+} from 'lucide-react';
+
 // 1. Set Interceptor di luar agar tidak terduplikasi setiap render
 axios.interceptors.request.use(
   (config) => {
@@ -476,36 +485,41 @@ function App() {
             </div>
             <nav className="sidebar-nav">
               <div className={`menu-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => handleTabChange('home')}>
-                <img src="/Icon home.png" alt="Home" /><span>Beranda</span>
+                <Home size={20} /><span>Beranda</span>
               </div>
 
               {user.role === 'mahasiswa' && (
                 <>
                   <div className={`menu-item ${activeTab === 'materi' ? 'active' : ''}`} onClick={() => handleTabChange('materi')}>
-                    <img src="/Icon materi.png" alt="Materi" /><span>Modul Materi</span>
+                    <BookOpen size={20} /><span>Modul Materi</span>
                   </div>
                   <div className={`menu-item ${activeTab === 'video' ? 'active' : ''}`} onClick={() => handleTabChange('video')}>
-                    <img src="/icon video.webp" alt="Video" /><span>Video Tutorial</span>
+                    <PlayCircle size={20} /><span>Video Tutorial</span>
                   </div>
                   <div className={`menu-item ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => handleTabChange('evaluasi')}>
-                    <img src="/Icon evaluasi.png" alt="Evaluasi" /><span>Evaluasi Praktik</span>
+                    <ClipboardCheck size={20} /><span>Evaluasi Praktik</span>
                   </div>
                 </>
               )}
 
               {user.role === 'dosen' && (
                 <div className={`menu-item ${activeTab === 'penilaian' ? 'active' : ''}`} onClick={() => handleTabChange('penilaian')}>
-                  <img src="/Icon evaluasi.png" alt="Penilaian" /><span>Penilaian</span>
+                  <ClipboardCheck size={20} /><span>Penilaian</span>
                 </div>
               )}
 
               {user.role === 'admin' && (
                 <div className={`menu-item ${activeTab === 'admin_users' ? 'active' : ''}`} onClick={() => handleTabChange('admin_users')}>
-                  <img src="/Icon materi.png" alt="Admin" /><span>Manajemen User</span>
+                  <Users size={20} /><span>Manajemen User</span>
                 </div>
               )}
             </nav>
-            <button onClick={handleLogout} className="btn-logout">Logout</button>
+
+            <button onClick={handleLogout} className="btn-logout">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <LogOut size={18} /> Logout
+              </div>
+            </button>
           </aside>
           <main className="content">{renderContent()}</main>
         </>
