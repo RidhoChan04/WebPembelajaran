@@ -135,54 +135,46 @@ app.get('/api/materi', async (req, res) => {
 });
 
 app.post('/api/evaluasi', async (req, res) => {
-    const { mahasiswa_id, materi_id, video_url } = req.body;
+  const { mahasiswa_id, materi_id, video_url } = req.body;
 
-    if (!video_url) {
-        return res.status(400).json({ error: "Link video tidak ditemukan" });
-    }
+  // 1. Validasi input
+  if (!video_url) {
+    return res.status(400).json({ error: "Link video tidak ditemukan" });
+  }
 
-    try {
-        const { data, error } = await pool
-            .from('evaluasi')
-            .insert([
-                {
-                    mahasiswa_id: mahasiswa_id,
-                    materi_id: materi_id,
-                    video_url: video_url,
-                    status: 'pending' // Tambahkan ini agar sesuai skema lama
-                }
-            ]);
+  try {
+    // 2. Gunakan pool.query() -- BUKAN pool.from()
+    const newEvaluasi = await pool.query(
+        `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
+         VALUES ($1, $2, $3, 'pending') RETURNING *`,
+        [mahasiswa_id, materi_id, video_url]
+    );
 
-        if (error) throw error;
-
-        res.status(200).json({ message: "Tugas berhasil dikirim!" });
-    } catch (err) {
-        console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
-        res.status(500).json({ error: err.message });
-    }
+    // 3. Kembalikan respon sukses
+    res.status(200).json({ 
+        message: "Tugas berhasil dikirim!", 
+        data: newEvaluasi.rows[0] 
+    });
+  } catch (err) {
+    // 4. Tangkap error jika database bermasalah
+    console.error("Database Error:", err.message); 
+    res.status(500).json({ error: "Gagal menyimpan tugas ke database" });
+  }
 });
 
-app.post('/api/evaluasi', async (req, res) => {
-    const { mahasiswa_id, materi_id, video_url } = req.body;
-
-    if (!video_url) {
-        return res.status(400).json({ error: "Link video tidak ditemukan" });
-    }
-
+app.get('/api/dosen/evaluasi', async (req, res) => {
     try {
-        const newEvaluasi = await pool.query(
-            `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
-         VALUES ($1, $2, $3, 'pending') RETURNING *`,
-            [mahasiswa_id, materi_id, video_url]
-        );
-
-        res.status(200).json({
-            message: "Tugas berhasil dikirim!",
-            data: newEvaluasi.rows[0]
-        });
+        const result = await pool.query(`
+            SELECT e.*, u.nama as nama_mahasiswa, m.tahap as nama_materi 
+            FROM evaluasi e
+            JOIN users u ON e.mahasiswa_id = u.id
+            JOIN materi m ON e.materi_id = m.id
+            WHERE e.status = 'pending' 
+            ORDER BY e.created_at ASC
+        `);
+        res.json(result.rows);
     } catch (err) {
-        console.error("Database Error:", err.message);
-        res.status(500).json({ error: "Gagal menyimpan tugas ke database" });
+        res.status(500).json({ error: 'Gagal memuat antrean' });
     }
 });
 
