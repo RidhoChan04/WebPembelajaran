@@ -129,27 +129,25 @@ app.get('/api/materi', async (req, res) => {
     }
 });
 
-app.post('/api/evaluasi', (req, res) => {
-    upload.single('video_praktik')(req, res, async (err) => {
-        if (err) return res.status(400).json({ error: err.message });
-        if (!req.file) return res.status(400).json({ error: "Pilih video terlebih dahulu" });
+app.post('/api/evaluasi', async (req, res) => {
+  const { mahasiswa_id, materi_id, video_url } = req.body;
+  if (!video_url) {
+    return res.status(400).json({ error: "Link video tidak ditemukan" });
+  }
 
-        try {
-            const { mahasiswa_id, materi_id } = req.body;
-            const fileName = req.file.filename;
+  try {
+    const { data, error } = await supabase
+      .from('evaluasi')
+      .insert([
+        { mahasiswa_id, materi_id, video_url }
+      ]);
 
-            const newEvaluasi = await pool.query(
-                `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
-                 VALUES ($1, $2, $3, 'pending') RETURNING *`,
-                [mahasiswa_id, materi_id, fileName]
-            );
-
-            res.json({ message: "Berhasil diunggah!", data: newEvaluasi.rows[0] });
-        } catch (dbErr) {
-            console.error(dbErr.message);
-            res.status(500).json({ error: 'Gagal simpan ke database' });
-        }
-    });
+    if (error) throw error;
+    
+    res.status(200).json({ message: "Tugas berhasil dikirim!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/dosen/evaluasi', async (req, res) => {
