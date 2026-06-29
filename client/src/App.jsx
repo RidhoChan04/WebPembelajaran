@@ -183,15 +183,15 @@ function App() {
         <div className="login-wrapper">
           <div className="login-left">
             <div className="login-left-content">
-              <h1>Belajar Senam<br />Lebih Mudah &<br />Interaktif</h1>
-              <p>Platform pembelajaran online untuk membantu mahasiswa memahami teknik dasar senam lantai secara efektif melalui materi, video, dan evaluasi.</p>
+              <h1 className="brand-title">GymnasticApp</h1>
+              <p className="brand-subtitle">Platform Pembelajaran Senam Lantai</p>
             </div>
           </div>
           <div className="login-right">
             <div className="login-card-modern">
               <div className="login-header">
-                <h2>{isRegister ? 'Daftar Akun Baru' : 'Selamat Datang Kembali 👋'}</h2>
-                <p>{isRegister ? 'Lengkapi data di bawah ini' : 'Silakan login untuk melanjutkan'}</p>
+                <h2>{isRegister ? 'Buat Akun Baru' : 'Masuk ke Akun'}</h2>
+                <p>{isRegister ? 'Lengkapi data Anda di bawah ini' : 'Masukkan email dan password Anda untuk masuk'}</p>
               </div>
               {isRegister ? (
                 <form onSubmit={async (e) => {
@@ -210,8 +210,8 @@ function App() {
                   <label>Email</label>
                   <input type="email" placeholder="Masukkan email Anda" onChange={(e) => setRegData({ ...regData, email: e.target.value })} required />
                   <label>Password</label>
-                  <input type="password" placeholder="Masukkan password Anda" onChange={(e) => setRegData({ ...regData, password: e.target.value })} required />
-                  <button type="submit" className="btn-primary">Daftar</button>
+                  <input type="password" placeholder="Buat password Anda" onChange={(e) => setRegData({ ...regData, password: e.target.value })} required />
+                  <button type="submit" className="btn-primary">Daftar Sekarang</button>
                   <p className="toggle-auth">Sudah punya akun? <span onClick={() => setIsRegister(false)}>Login di sini</span></p>
                 </form>
               ) : (

@@ -58,29 +58,62 @@ body, html {
 }
 
 /* Ilustrasi lengkungan opsional agar mirip referensi */
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); /* Warna biru dibuat sedikit lebih cerah */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Menengahkan konten secara horizontal */
+  padding: 60px;
+  position: relative;
+  overflow: hidden;
+  text-align: center; /* Teks rata tengah */
+}
+
+/* Lingkaran dekorasi agar tidak terlalu polos */
 .login-left::after {
   content: '';
   position: absolute;
-  bottom: -10%;
+  bottom: -15%;
   right: -10%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 50%;
 }
 
-.login-left-content h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 20px;
+.login-left::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 250px;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
 }
 
-.login-left-content p {
+.login-left-content {
+  position: relative;
+  z-index: 2; /* Agar teks berada di atas lingkaran dekorasi */
+}
+
+.brand-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin: 0 0 10px 0;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.brand-subtitle {
   font-size: 1.1rem;
-  opacity: 0.9;
-  line-height: 1.6;
-  max-width: 80%;
+  opacity: 0.85;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.5px;
 }
 
 .login-right {
