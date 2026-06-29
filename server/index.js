@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -130,31 +132,31 @@ app.get('/api/materi', async (req, res) => {
 });
 
 app.post('/api/evaluasi', async (req, res) => {
-    const { mahasiswa_id, materi_id, video_url } = req.body;
+  const { mahasiswa_id, materi_id, video_url } = req.body;
 
-    if (!video_url) {
-        return res.status(400).json({ error: "Link video tidak ditemukan" });
-    }
+  if (!video_url) {
+    return res.status(400).json({ error: "Link video tidak ditemukan" });
+  }
 
-    try {
-        const { data, error } = await supabase
-            .from('evaluasi')
-            .insert([
-                {
-                    mahasiswa_id: mahasiswa_id,
-                    materi_id: materi_id,
-                    video_url: video_url,
-                    status: 'pending' // Tambahkan ini agar sesuai skema lama
-                }
-            ]);
+  try {
+    const { data, error } = await supabase
+      .from('evaluasi')
+      .insert([
+        { 
+          mahasiswa_id: mahasiswa_id, 
+          materi_id: materi_id, 
+          video_url: video_url,
+          status: 'pending' // Tambahkan ini agar sesuai skema lama
+        }
+      ]);
 
-        if (error) throw error;
-
-        res.status(200).json({ message: "Tugas berhasil dikirim!" });
-    } catch (err) {
-        console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
-        res.status(500).json({ error: err.message });
-    }
+    if (error) throw error;
+    
+    res.status(200).json({ message: "Tugas berhasil dikirim!" });
+  } catch (err) {
+    console.error("Supabase Error:", err); // Tambahkan log ini agar tahu kenapa error
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/dosen/evaluasi', async (req, res) => {
