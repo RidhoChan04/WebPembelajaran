@@ -135,31 +135,31 @@ app.get('/api/materi', async (req, res) => {
 });
 
 app.post('/api/evaluasi', async (req, res) => {
-  const { mahasiswa_id, materi_id, video_url } = req.body;
+    const { mahasiswa_id, materi_id, video_url } = req.body;
 
-  // 1. Validasi input
-  if (!video_url) {
-    return res.status(400).json({ error: "Link video tidak ditemukan" });
-  }
+    // 1. Validasi input
+    if (!video_url) {
+        return res.status(400).json({ error: "Link video tidak ditemukan" });
+    }
 
-  try {
-    // 2. Gunakan pool.query() -- BUKAN pool.from()
-    const newEvaluasi = await pool.query(
-        `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
+    try {
+        // 2. Gunakan pool.query() -- BUKAN pool.from()
+        const newEvaluasi = await pool.query(
+            `INSERT INTO evaluasi (mahasiswa_id, materi_id, video_url, status) 
          VALUES ($1, $2, $3, 'pending') RETURNING *`,
-        [mahasiswa_id, materi_id, video_url]
-    );
+            [mahasiswa_id, materi_id, video_url]
+        );
 
-    // 3. Kembalikan respon sukses
-    res.status(200).json({ 
-        message: "Tugas berhasil dikirim!", 
-        data: newEvaluasi.rows[0] 
-    });
-  } catch (err) {
-    // 4. Tangkap error jika database bermasalah
-    console.error("Database Error:", err.message); 
-    res.status(500).json({ error: "Gagal menyimpan tugas ke database" });
-  }
+        // 3. Kembalikan respon sukses
+        res.status(200).json({
+            message: "Tugas berhasil dikirim!",
+            data: newEvaluasi.rows[0]
+        });
+    } catch (err) {
+        // 4. Tangkap error jika database bermasalah
+        console.error("Database Error:", err.message);
+        res.status(500).json({ error: "Gagal menyimpan tugas ke database" });
+    }
 });
 
 app.get('/api/dosen/evaluasi', async (req, res) => {
@@ -181,14 +181,18 @@ app.get('/api/dosen/evaluasi', async (req, res) => {
 app.put('/api/evaluasi/:id', async (req, res) => {
     const { id } = req.params;
     const { nilai_tugas, nilai_partisipasi, feedback } = req.body;
+
     try {
         await pool.query(
-            `UPDATE evaluasi SET nilai_tugas = $1, nilai_partisipasi = $2, feedback = $3, status = 'dinilai' 
+            `UPDATE evaluasi 
+             SET nilai_tugas = $1, nilai_partisipasi = $2, feedback = $3, status = 'dinilai' 
              WHERE id = $4`,
-            [nilai_tugas, nilai_partisipasi, feedback, id]
+            // Jika kosong, otomatis jadikan 0 dan string kosong agar DB tidak crash
+            [nilai_tugas || 0, nilai_partisipasi || 0, feedback || '', id]
         );
         res.json({ message: "Penilaian disimpan" });
     } catch (err) {
+        console.error("Gagal update nilai:", err.message);
         res.status(500).json({ error: 'Gagal simpan penilaian' });
     }
 });

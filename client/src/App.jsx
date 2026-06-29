@@ -421,23 +421,45 @@ function App() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Nilai Tugas</label>
-                      <input type="number" placeholder="0-100" className="input-style" />
+                      <input
+                        type="number"
+                        placeholder="0-100"
+                        className="input-style"
+                        value={penilaianData.nilai_tugas}
+                        onChange={(e) => setPenilaianData({ ...penilaianData, nilai_tugas: e.target.value })}
+                      />
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Partisipasi</label>
-                      <input type="number" placeholder="0-100" className="input-style" />
+                      <input
+                        type="number"
+                        placeholder="0-100"
+                        className="input-style"
+                        value={penilaianData.nilai_partisipasi}
+                        onChange={(e) => setPenilaianData({ ...penilaianData, nilai_partisipasi: e.target.value })}
+                      />
                     </div>
                   </div>
 
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Feedback Dosen</label>
-                  <textarea placeholder="Tuliskan saran perbaikan gerakan..." className="input-style" style={{ height: '100px' }}></textarea>
+                  <textarea
+                    placeholder="Tuliskan saran perbaikan gerakan..."
+                    className="input-style"
+                    style={{ height: '100px' }}
+                    value={penilaianData.feedback}
+                    onChange={(e) => setPenilaianData({ ...penilaianData, feedback: e.target.value })}
+                  ></textarea>
 
                   <button
                     onClick={() => {
+                      // Validasi sederhana agar dosen tidak mengirim nilai kosong
+                      if (!penilaianData.nilai_tugas) return alert("Silakan isi Nilai Tugas terlebih dahulu!");
+
                       handleSavePenilaian(selectedEvaluasi.id);
                       setSelectedEvaluasi(null);
                     }}
-                    className="btn-submit-grading"
+                    className="btn-primary"
+                    style={{ marginTop: '20px', width: '100%' }}
                   >
                     <span style={{ marginRight: '8px' }}>🚀</span>
                     Kirim Penilaian & Selesaikan
