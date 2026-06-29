@@ -261,10 +261,9 @@ function App() {
               <p>Memuat materi...</p>
             ) : (
               materiList.map((m) => (
-                <div key={m.id} className="card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <h3 className="materi-step">{m.tahap}</h3>
-                    {/* Tombol Pilih Materi tetap di sini */}
+                <div key={m.id} className="materi-card-modern">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 className="materi-step" style={{ margin: 0, fontSize: '1.4rem', color: '#1e3a8a' }}>{m.tahap}</h3>
                     <button
                       className={`btn-select ${selectedMateri === m.id ? 'active' : ''}`}
                       onClick={() => setSelectedMateri(m.id)}
