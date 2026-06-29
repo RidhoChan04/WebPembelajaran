@@ -387,18 +387,33 @@ function App() {
                   <span className="badge-materi">{selectedEvaluasi.nama_materi}</span>
                 </div>
 
-                <div className="video-container-modern" style={{ textAlign: 'center', padding: '40px', background: '#eff6ff', borderRadius: '12px', border: '1px dashed #93c5fd' }}>
+                <div className="video-container-modern" style={{ textAlign: 'center', padding: '20px', background: '#eff6ff', borderRadius: '12px', border: '1px dashed #93c5fd' }}>
                   <h4 style={{ color: '#1e40af', marginBottom: '8px' }}>Tugas Video Mahasiswa</h4>
-                  <p style={{ color: '#60a5fa', marginBottom: '20px', fontSize: '0.9rem' }}>Mahasiswa melampirkan video menggunakan Google Drive.</p>
 
+                  {/* AREA PEMUTAR VIDEO (EMBED GOOGLE DRIVE) */}
+                  {selectedEvaluasi.video_url ? (
+                    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', marginBottom: '15px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                      <iframe
+                        src={selectedEvaluasi.video_url.replace(/\/view.*$/, '/preview')}
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                        allow="autoplay"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  ) : (
+                    <p style={{ color: '#dc2626' }}>Tidak ada link video.</p>
+                  )}
+
+                  {/* TOMBOL ALTERNATIF JIKA VIDEO TIDAK MUNCUL */}
+                  <p style={{ color: '#60a5fa', marginBottom: '12px', fontSize: '0.85rem' }}>*Jika video diblokir, pastikan akses link GDrive mahasiswa diatur ke "Anyone with the link".</p>
                   <a
-                    href={selectedEvaluasi.video_url}
+                    href={selectedEvaluasi.video_url?.startsWith('http') ? selectedEvaluasi.video_url : `https://${selectedEvaluasi.video_url}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-primary"
-                    style={{ display: 'inline-block', textDecoration: 'none' }}
+                    className="btn-pdf"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', background: '#ffffff', color: '#2563eb' }}
                   >
-                    <span>🔗</span> Buka Video di Google Drive
+                    <span>🔗</span> Buka di Tab Baru
                   </a>
                 </div>
 
@@ -520,58 +535,58 @@ function App() {
     }
   };
 
-        return (
-          <div className="container">
-            {!user ? renderContent() : (
-              <>
-                <aside className="sidebar">
-                  <div className="sidebar-profile">
-                    <h3>{user.nama}</h3>
-                    <span className="badge-role">{user.role.toUpperCase()}</span>
+  return (
+    <div className="container">
+      {!user ? renderContent() : (
+        <>
+          <aside className="sidebar">
+            <div className="sidebar-profile">
+              <h3>{user.nama}</h3>
+              <span className="badge-role">{user.role.toUpperCase()}</span>
+            </div>
+            <nav className="sidebar-nav">
+              <div className={`menu-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => handleTabChange('home')}>
+                <Home size={20} /><span>Beranda</span>
+              </div>
+
+              {user.role === 'mahasiswa' && (
+                <>
+                  <div className={`menu-item ${activeTab === 'materi' ? 'active' : ''}`} onClick={() => handleTabChange('materi')}>
+                    <BookOpen size={20} /><span>Materi Senam</span>
                   </div>
-                  <nav className="sidebar-nav">
-                    <div className={`menu-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => handleTabChange('home')}>
-                      <Home size={20} /><span>Beranda</span>
-                    </div>
+                  <div className={`menu-item ${activeTab === 'video' ? 'active' : ''}`} onClick={() => handleTabChange('video')}>
+                    <PlayCircle size={20} /><span>Video Tutorial</span>
+                  </div>
+                  <div className={`menu-item ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => handleTabChange('evaluasi')}>
+                    <ClipboardCheck size={20} /><span>Evaluasi Praktik</span>
+                  </div>
+                </>
+              )}
 
-                    {user.role === 'mahasiswa' && (
-                      <>
-                        <div className={`menu-item ${activeTab === 'materi' ? 'active' : ''}`} onClick={() => handleTabChange('materi')}>
-                          <BookOpen size={20} /><span>Materi Senam</span>
-                        </div>
-                        <div className={`menu-item ${activeTab === 'video' ? 'active' : ''}`} onClick={() => handleTabChange('video')}>
-                          <PlayCircle size={20} /><span>Video Tutorial</span>
-                        </div>
-                        <div className={`menu-item ${activeTab === 'evaluasi' ? 'active' : ''}`} onClick={() => handleTabChange('evaluasi')}>
-                          <ClipboardCheck size={20} /><span>Evaluasi Praktik</span>
-                        </div>
-                      </>
-                    )}
+              {user.role === 'dosen' && (
+                <div className={`menu-item ${activeTab === 'penilaian' ? 'active' : ''}`} onClick={() => handleTabChange('penilaian')}>
+                  <ClipboardCheck size={20} /><span>Penilaian</span>
+                </div>
+              )}
 
-                    {user.role === 'dosen' && (
-                      <div className={`menu-item ${activeTab === 'penilaian' ? 'active' : ''}`} onClick={() => handleTabChange('penilaian')}>
-                        <ClipboardCheck size={20} /><span>Penilaian</span>
-                      </div>
-                    )}
+              {user.role === 'admin' && (
+                <div className={`menu-item ${activeTab === 'admin_users' ? 'active' : ''}`} onClick={() => handleTabChange('admin_users')}>
+                  <Users size={20} /><span>Manajemen User</span>
+                </div>
+              )}
+            </nav>
 
-                    {user.role === 'admin' && (
-                      <div className={`menu-item ${activeTab === 'admin_users' ? 'active' : ''}`} onClick={() => handleTabChange('admin_users')}>
-                        <Users size={20} /><span>Manajemen User</span>
-                      </div>
-                    )}
-                  </nav>
+            <button onClick={handleLogout} className="btn-logout">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <LogOut size={18} /> Logout
+              </div>
+            </button>
+          </aside>
+          <main className="content">{renderContent()}</main>
+        </>
+      )}
+    </div>
+  );
+}
 
-                  <button onClick={handleLogout} className="btn-logout">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                      <LogOut size={18} /> Logout
-                    </div>
-                  </button>
-                </aside>
-                <main className="content">{renderContent()}</main>
-              </>
-            )}
-          </div>
-        );
-    }
-
-    export default App;
+export default App;
